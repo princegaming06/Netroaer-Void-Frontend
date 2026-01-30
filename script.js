@@ -1099,7 +1099,7 @@ const fakeUsersDB = {
     username: "void_otaku",
     verified: true,
     status: "🎧 Sound Designer | SFX Lover",
-    avatar: "logo.png",
+    avatar: "previewImg",
     connects: 128,
     circles: 4,
     skills: ["Editing", "Sound", "Anime", "Gaming"],
