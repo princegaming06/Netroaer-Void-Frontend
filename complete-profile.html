@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Complete Profile</title>
+  <link rel="stylesheet" href="complete-profile.css">
+</head>
+<body>
+
+<div class="cp-wrapper">
+  <h1>Complete your profile</h1>
+  <p>This helps people recognize you.</p>
+
+  <!-- Avatar -->
+  <div class="cp-avatar">
+    <img id="avatarPreview" src="default-avatar.png">
+    <label class="avatar-btn">
+      Change photo
+      <input type="file" id="avatarInput" hidden>
+    </label>
+  </div>
+
+  <!-- Name -->
+  <div class="cp-field">
+    <label>Name</label>
+    <input type="text" id="nameInput" placeholder="Your name">
+  </div>
+
+  <!-- Username -->
+  <div class="cp-field">
+    <label>Username</label>
+    <input type="text" id="usernameInput" placeholder="@username">
+    <small id="usernameHint"></small>
+  </div>
+
+  <!-- DOB -->
+  <div class="cp-field">
+    <label>Date of birth</label>
+    <input type="date" id="dobInput">
+  </div>
+
+  <!-- Actions -->
+  <div class="cp-actions">
+    <button id="skipBtn">Skip for now</button>
+    <button id="saveBtn">Save & Continue</button>
+  </div>
+</div>
+
+<script src="complete-profile.js"></script>
+</body>
+</html>

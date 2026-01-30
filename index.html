@@ -1,2049 +1,676 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-  <title>Netroar Studio</title>
-  <link rel="icon" type="image/png" href="logo.png" />
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>Netroar Studio</title>
+    <link rel="icon" type="image/png" href="logo.png" />
+    <link rel="stylesheet" href="style.css">
+    <script type="module" src="script.js"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Orbitron:wght@500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+  </head>
 
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <body data-theme="dark" data-ui="normal">
+    <header>NETROAR STUDIO</header>
 
-  <style>
-    :root{
-      --bg:#000;
-      --panel:rgba(20,20,40,.35);
-      --panel2:rgba(20,20,40,.45);
-      --text:#e9f6ff;
-      --muted:#cce9ff;
-      --accent:#00c3ff;
+    <!-- HOME -->
+    <section id="home" class="page active">
+      <div class="hero-video">
+        <video src="bg.mp4" muted autoplay loop playsinline></video>
+      </div>
+      <div class="hero-overlay">
+        <p class="hero-tagline">Free Editing Assets for Modern Creators</p>
+        <button class="btn" id="ctaAssets">
+          <i class="fa-solid fa-folder-open"></i>
+          Explore Assets
+        </button>
+      </div>
+    </section>
 
-      --radius:22px;
-      --headerH:76px;
-      --footerH:64px;
-
-      --uiScale:1;
-      --animDur:.25s;
-      --rippleScale:6;
-    }
-
-    body[data-theme="light"]{
-      --bg:#f7f7fb;
-      --panel:rgba(255,255,255,.65);
-      --panel2:rgba(255,255,255,.78);
-      --text:#0b0b12;
-      --muted:#1a1a22;
-      --accent:#0aa3d8;
-    }
-
-    body[data-ui="small"]{ --uiScale:.92; }
-    body[data-ui="normal"]{ --uiScale:1; }
-    body[data-ui="large"]{ --uiScale:1.08; }
-
-    *{box-sizing:border-box;margin:0;padding:0}
-    html,body{height:100%}
-    body{
-      background:var(--bg);
-      color:var(--text);
-      font-family:Poppins,sans-serif;
-      overflow:hidden;
-      font-size:calc(16px * var(--uiScale));
-      transition:background var(--animDur) ease, color var(--animDur) ease;
-    }
-
-    header{
-      position:fixed;
-      top:24px;
-      left:50%;
-      transform:translateX(-50%);
-      z-index:50;
-      padding:14px 42px;
-      border-radius:999px;
-      font-family:Orbitron, sans-serif;
-      font-size:1.8rem;
-      font-weight:700;
-      letter-spacing:2px;
-      color:inherit;
-      text-shadow:0 0 12px rgba(0,195,255,.65), 0 0 28px rgba(0,195,255,.25);
-      background:var(--panel);
-      backdrop-filter:blur(14px);
-      -webkit-backdrop-filter:blur(14px);
-      outline:1px solid rgba(0,195,255,.18);
-      box-shadow:0 0 30px rgba(0,0,0,.25), inset 0 0 0 1px rgba(255,255,255,.05);
-      transition:transform .35s ease, opacity .35s ease, background var(--animDur) ease;
-      user-select:none;
-    }
-    header.hide{
-      transform:translate(-50%,-140%);
-      opacity:0;
-    }
-
-    footer{
-      position:fixed;
-      bottom:22px;
-      left:50%;
-      transform:translateX(-50%);
-      z-index:50;
-      width:88%;
-      max-width:640px;
-      display:flex;
-      justify-content:space-around;
-      align-items:center;
-      padding:10px 14px;
-      border-radius:999px;
-      background:var(--panel);
-      backdrop-filter:blur(14px);
-      -webkit-backdrop-filter:blur(14px);
-      outline:1px solid rgba(255,255,255,.08);
-      box-shadow:0 0 35px rgba(0,0,0,.25);
-      transition:background var(--animDur) ease;
-    }
-    footer i{
-      font-size:1.45rem;
-      padding:10px;
-      color:var(--muted);
-      cursor:pointer;
-      transition:transform .2s ease, opacity .2s ease, color .2s ease;
-      border-radius:14px;
-      opacity:.88;
-      user-select:none;
-    }
-    footer i:hover{
-      color:var(--accent);
-      transform:scale(1.08);
-      opacity:1;
-    }
-    footer i.active{
-      color:var(--accent);
-      background:rgba(0,195,255,.08);
-      outline:1px solid rgba(0,195,255,.18);
-      opacity:1;
-    }
-
-    .page{
-      display:none;
-      height:100vh;
-      padding: calc(var(--headerH) + 40px) 6% calc(var(--footerH) + 56px);
-      opacity:0;
-      transform:translateY(8px);
-      transition:opacity var(--animDur) ease, transform var(--animDur) ease;
-    }
-    .page.active{
-      display:block;
-      opacity:1;
-      transform:translateY(0);
-    }
-    .scrollable{
-      overflow-y:auto;
-      scrollbar-width:none;
-    }
-    .scrollable::-webkit-scrollbar{display:none}
-
-    /* HOME */
-    #home{ padding:0; position:relative; overflow:hidden; }
-    .hero-video{ position:absolute; inset:0; z-index:1; }
-    .hero-video video{
-      width:100%; height:100%; object-fit:cover; object-position:center; display:block;
-    }
-    .hero-overlay{
-      position:absolute; inset:0; z-index:2;
-      background:radial-gradient(circle at center, rgba(0,0,0,.12), rgba(0,0,0,.75));
-      display:flex; flex-direction:column; justify-content:center; align-items:center;
-      text-align:center; padding:24px;
-    }
-    body[data-theme="light"] .hero-overlay{
-      background:radial-gradient(circle at center, rgba(255,255,255,.12), rgba(0,0,0,.35));
-    }
-
-    .hero-tagline{
-      font-size:1.12rem;
-      letter-spacing:.4px;
-      color:var(--muted);
-      opacity:.92;
-      margin-bottom:22px;
-      max-width:720px;
-      text-shadow:0 0 12px rgba(0,0,0,.35);
-    }
-
-    .btn{
-      display:inline-flex; align-items:center; justify-content:center; gap:10px;
-      padding:14px 42px; border-radius:999px; border:none;
-      background:var(--accent); color:#000; font-weight:800; cursor:pointer;
-      transition:transform .2s ease, box-shadow .2s ease;
-      user-select:none;
-    }
-    .btn:hover{ transform:translateY(-2px) scale(1.03); box-shadow:0 0 28px rgba(0,195,255,.5); }
-    .btn:active{ transform:scale(.96); }
-
-    .section-title{ text-align:center; margin:10px 0 22px; }
-    .section-title h2{
-      font-family:Orbitron,sans-serif;
-      font-size:2.4rem;
-      margin-bottom:10px;
-      text-shadow:0 0 22px rgba(0,195,255,.22);
-    }
-    .section-title p{ color:var(--muted); opacity:.85; font-size:1rem; }
-
-    /* Assets */
-    .asset-filters{
-      display:flex; justify-content:center; gap:12px; flex-wrap:wrap;
-      margin:26px 0 34px;
-    }
-    .asset-filters button{
-      padding:10px 20px; border-radius:999px; border:none; cursor:pointer;
-      background:rgba(20,20,40,.28);
-      color:var(--muted);
-      backdrop-filter:blur(12px);
-      -webkit-backdrop-filter:blur(12px);
-      outline:1px solid rgba(255,255,255,.06);
-      transition:.2s;
-      font-weight:700;
-    }
-    body[data-theme="light"] .asset-filters button{
-      background:rgba(0,0,0,.04);
-      outline:1px solid rgba(0,0,0,.08);
-    }
-    .asset-filters button.active,
-    .asset-filters button:hover{
-      background:var(--accent);
-      color:#000;
-      outline:1px solid rgba(0,195,255,.28);
-      box-shadow:0 0 18px rgba(0,195,255,.35);
-    }
-
-    .assets-grid{
-      display:grid;
-      grid-template-columns:repeat(auto-fit, minmax(260px, 1fr));
-      gap:26px;
-    }
-    .asset-card{
-      position:relative;
-      height:240px;
-      border-radius:22px;
-      overflow:hidden;
-      background:rgba(20,20,40,.25);
-      outline:1px solid rgba(255,255,255,.07);
-      box-shadow:0 0 30px rgba(0,0,0,.25);
-      transform:translateY(0);
-      transition:transform .25s ease, box-shadow .25s ease;
-    }
-    body[data-theme="light"] .asset-card{
-      background:rgba(0,0,0,.03);
-      outline:1px solid rgba(0,0,0,.08);
-      box-shadow:0 0 25px rgba(0,0,0,.10);
-    }
-    .asset-card:hover{
-      transform:translateY(-7px);
-      box-shadow:0 0 40px rgba(0,195,255,.18), 0 0 26px rgba(0,0,0,.25);
-      outline:1px solid rgba(0,195,255,.16);
-    }
-
-    .asset-card .thumb,
-    .asset-card .preview-video{
-      position:absolute;
-      inset:0;
-      width:100%;
-      height:100%;
-      object-fit:cover;
-      transition:opacity .35s ease;
-    }
-    .asset-card .preview-video{ opacity:0; pointer-events:none; }
-    .asset-card:hover .thumb{opacity:0;}
-    .asset-card:hover .preview-video{opacity:1;}
-
-    .asset-card .overlay{
-      position:absolute;
-      inset:0;
-      z-index:3;
-      display:flex;
-      flex-direction:column;
-      justify-content:flex-end;
-      align-items:center;
-      gap:12px;
-      padding:22px;
-      text-align:center;
-      background:linear-gradient(to top, rgba(0,0,0,.78), rgba(0,0,0,.22), transparent);
-    }
-    body[data-theme="light"] .asset-card .overlay{
-      background:linear-gradient(to top, rgba(0,0,0,.55), rgba(0,0,0,.10), transparent);
-    }
-
-    .asset-card .overlay h3{
-      font-size:1.12rem;
-      color:#fff;
-      text-shadow:0 0 12px rgba(0,0,0,.7);
-    }
-
-    .asset-actions{ display:flex; gap:10px; width:100%; justify-content:center; flex-wrap:wrap; }
-    .asset-btn{
-      display:inline-flex; align-items:center; justify-content:center;
-      padding:10px 18px; border-radius:999px; font-weight:800; text-decoration:none;
-      transition:.2s; border:none; cursor:pointer; user-select:none; min-width:124px;
-    }
-    .asset-btn.primary{ background:var(--accent); color:#000; }
-    .asset-btn.ghost{
-      background:rgba(255,255,255,.10);
-      color:#fff;
-      outline:1px solid rgba(255,255,255,.18);
-      backdrop-filter:blur(10px);
-      -webkit-backdrop-filter:blur(10px);
-    }
-    body[data-theme="light"] .asset-btn.ghost{
-      background:rgba(255,255,255,.70);
-      color:#000;
-      outline:1px solid rgba(0,0,0,.10);
-    }
-    .asset-btn:hover{ transform:scale(1.03); }
-    .asset-btn:active{ transform:scale(.97); }
-
-    .asset-badge{
-      position:absolute; top:14px; left:14px; z-index:4;
-      padding:7px 12px; border-radius:999px;
-      font-size:.78rem; font-weight:800; letter-spacing:.6px; color:#fff;
-      background:rgba(0,0,0,.45);
-      backdrop-filter:blur(10px);
-      -webkit-backdrop-filter:blur(10px);
-      outline:1px solid rgba(255,255,255,.08);
-    }
-
-    /* About */
-    .about-inner{ max-width:1000px; margin:0 auto; }
-    .about-inner h2{
-      font-family:Orbitron,sans-serif;
-      font-size:2.4rem;
-      margin-bottom:18px;
-      text-align:center;
-    }
-    .about-main{
-      text-align:center;
-      color:var(--muted);
-      opacity:.9;
-      line-height:1.8;
-      font-size:1.05rem;
-      max-width:850px;
-      margin:0 auto 36px;
-    }
-    .about-roles{
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:24px;
-      margin-top:18px;
-    }
-    .role{
-      padding:28px;
-      border-radius:24px;
-      background:var(--panel);
-      backdrop-filter:blur(14px);
-      -webkit-backdrop-filter:blur(14px);
-      outline:1px solid rgba(255,255,255,.07);
-      box-shadow:0 0 26px rgba(0,0,0,.18);
-      transition:background var(--animDur) ease;
-    }
-    body[data-theme="light"] .role{ outline:1px solid rgba(0,0,0,.08); }
-    .role h3{font-size:1.15rem;margin-bottom:10px}
-    .role p{color:var(--muted);opacity:.9;line-height:1.7;font-size:1rem}
-    .about-tagline{ text-align:center; margin-top:34px; font-weight:800; opacity:.92; }
-
-    /* Profile */
-    .profile-wrap{ max-width:980px; margin:0 auto; display:grid; gap:18px; }
-    .card{
-      position: relative;
-      background:var(--panel);
-      border-radius:24px;
-      padding:20px;
-      outline:1px solid rgba(255,255,255,.08);
-      box-shadow:0 0 26px rgba(0,0,0,.18);
-      backdrop-filter:blur(14px);
-      -webkit-backdrop-filter:blur(14px);
-      transition:background var(--animDur) ease;
-    }
-    /* ✅ When dropdown opens, raise the whole card above other cards */
-    .card.raised{
-      z-index: 999999; /* card itself goes above other cards */
-    }
-
-    body[data-theme="light"] .card{
-      outline:1px solid rgba(0,0,0,.10);
-      box-shadow:0 0 18px rgba(0,0,0,.08);
-    }
-    .profile-top{ display:flex; gap:16px; align-items:center; flex-wrap:wrap; }
-    .avatar{
-      width:64px;height:64px;border-radius:18px;
-      background:rgba(255,255,255,.08);
-      outline:1px solid rgba(255,255,255,.10);
-      overflow:hidden;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-weight:900;
-    }
-    body[data-theme="light"] .avatar{ background:rgba(0,0,0,.04); outline:1px solid rgba(0,0,0,.10); }
-    .avatar img{width:100%;height:100%;object-fit:cover}
-    .p-meta h3{ font-family:Orbitron,sans-serif; font-size:1.4rem; margin-bottom:4px; }
-    .p-meta p{ color:var(--muted); opacity:.9 }
-    .badge{
-      margin-left:auto;
-      padding:8px 12px;
-      border-radius:999px;
-      font-weight:900;
-      letter-spacing:.4px;
-      background:rgba(0,195,255,.10);
-      outline:1px solid rgba(0,195,255,.18);
-      color:var(--accent);
-      white-space:nowrap;
-    }
-    .row{ display:flex; gap:10px; flex-wrap:wrap; margin-top:14px; }
-    .btn2{
-      display:inline-flex; align-items:center; justify-content:center; gap:10px;
-      padding:12px 16px; border-radius:14px; border:none; cursor:pointer;
-      font-weight:900; user-select:none; transition:.2s;
-    }
-    .btn2.primary{ background:#fff; color:#000; }
-    body[data-theme="light"] .btn2.primary{ background:#000; color:#fff; }
-    .btn2.ghost{
-      background:rgba(255,255,255,.06);
-      color:inherit;
-      outline:1px solid rgba(255,255,255,.12);
-    }
-    body[data-theme="light"] .btn2.ghost{ background:rgba(0,0,0,.04); outline:1px solid rgba(0,0,0,.10); }
-    .btn2:hover{transform:translateY(-1px)}
-    .btn2:active{transform:scale(.98)}
-
-    .status-grid{
-      display:grid;
-      grid-template-columns:repeat(auto-fit, minmax(240px, 1fr));
-      gap:12px;
-      margin-top:10px;
-    }
-    .status{
-      padding:14px;
-      border-radius:18px;
-      background:rgba(255,255,255,.06);
-      outline:1px solid rgba(255,255,255,.10);
-    }
-    body[data-theme="light"] .status{ background:rgba(0,0,0,.03); outline:1px solid rgba(0,0,0,.10); }
-    .status b{display:block;margin-bottom:6px}
-    .status small{color:var(--muted);opacity:.9}
-
-    .list{ display:grid; gap:10px; margin-top:10px; }
-    .list-item{
-      padding:12px 14px;
-      border-radius:16px;
-      background:rgba(255,255,255,.06);
-      outline:1px solid rgba(255,255,255,.10);
-      display:flex;
-      justify-content:space-between;
-      gap:10px;
-    }
-    body[data-theme="light"] .list-item{ background:rgba(0,0,0,.03); outline:1px solid rgba(0,0,0,.10); }
-    .list-item span{color:var(--muted);opacity:.95}
-
-    /* Settings */
-    .settings-wrap{ max-width:980px; margin:0 auto; display:grid; gap:14px; }
-    .setting{
-      display:flex;
-      gap:12px;
-      align-items:center;
-      justify-content:space-between;
-      flex-wrap:wrap;
-      padding:14px;
-      border-radius:18px;
-      background:rgba(255,255,255,.06);
-      outline:1px solid rgba(255,255,255,.10);
-    }
-    body[data-theme="light"] .setting{ background:rgba(0,0,0,.03); outline:1px solid rgba(0,0,0,.10); }
-    .setting .left{ min-width:240px; }
-    .setting .left b{ display:block; margin-bottom:4px; letter-spacing:.2px; }
-    .setting .left small{ color:var(--muted); opacity:.8; }
-
-    select,input[type="range"]{ accent-color: var(--accent); }
-    select{
-      padding:12px 46px 12px 14px;
-      border-radius:16px;
-      border:1px solid rgba(255,255,255,.14);
-      background:
-        linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
-      color:inherit;
-      font-weight:800;
-      cursor:pointer;
-      box-shadow:
-        0 10px 25px rgba(0,0,0,.25),
-        inset 0 0 0 1px rgba(255,255,255,.05);
-    }
-    body[data-theme="light"] select{
-      border:1px solid rgba(0,0,0,.14);
-      background:linear-gradient(180deg, rgba(255,255,255,.92), rgba(255,255,255,.70));
-      box-shadow:0 10px 25px rgba(0,0,0,.08), inset 0 0 0 1px rgba(0,0,0,.04);
-    }
-    select option{ background:#0b0b0e; color:#fff; }
-    body[data-theme="light"] select option{ background:#fff; color:#0b0b12; }
-
-    .toggle{
-      display:inline-flex;
-      align-items:center;
-      gap:10px;
-      user-select:none;
-    }
-    .toggle span{ font-weight:800; opacity:.9; }
-    .toggle input{
-      appearance:none;
-      -webkit-appearance:none;
-      width:52px; height:30px;
-      border-radius:999px;
-      cursor:pointer;
-      position:relative;
-      background: rgba(255,255,255,.10);
-      border: 1px solid rgba(255,255,255,.14);
-
-      box-shadow:
-        inset 0 0 0 1px rgba(255,255,255,.06),
-        0 10px 24px rgba(0,0,0,.22);
-      transition: background .18s ease, border-color .18s ease, box-shadow .18s ease, transform .15s ease;
-    }
-    .toggle input::after{
-      content:"";
-      position:absolute;
-      top:4px; left:4px;
-      width:22px; height:22px;
-      border-radius:999px;
-      background:#fff;
-      box-shadow: 0 8px 18px rgba(0,0,0,.28);
-      transition: transform .18s ease, background .18s ease;
-    }
-    .toggle input:hover{ transform: translateY(-1px); }
-    .toggle input:checked{
-      background: rgba(0,195,255,.22);
-      border-color: rgba(0,195,255,.35);
-      box-shadow:
-        0 0 0 5px rgba(0,195,255,.12),
-        0 14px 32px rgba(0,0,0,.30);
-    }
-    .toggle input:checked::after{
-      transform: translateX(22px);
-      background: #001018;
-    }
-    body[data-theme="light"] .toggle input{
-      background: rgba(0,0,0,.06);
-      border-color: rgba(0,0,0,.12);
-      box-shadow: 0 10px 20px rgba(0,0,0,.08);
-    }
-    body[data-theme="light"] .toggle input:checked{
-      background: rgba(10,163,216,.18);
-      border-color: rgba(10,163,216,.28);
-      box-shadow: 0 0 0 5px rgba(10,163,216,.10), 0 14px 24px rgba(0,0,0,.10);
-    }
-
-    .range-wrap{ display:flex; align-items:center; gap:12px; width:min(420px, 76vw); }
-    .setting input[type="range"]{
-      -webkit-appearance:none;
-      appearance:none;
-      width:min(360px, 72vw);
-      height:8px;
-      border-radius:999px;
-      outline:none;
-      background: rgba(255,255,255,.12);
-      border: 1px solid rgba(255,255,255,.12);
-      box-shadow: inset 0 0 0 1px rgba(255,255,255,.05);
-    }
-    body[data-theme="light"] .setting input[type="range"]{
-      background: rgba(0,0,0,.08);
-      border: 1px solid rgba(0,0,0,.10);
-    }
-    .setting input[type="range"]::-webkit-slider-thumb{
-      -webkit-appearance:none;
-      appearance:none;
-      width:22px; height:22px;
-      border-radius:999px;
-      background: var(--accent);
-      border: 2px solid rgba(0,0,0,.55);
-      box-shadow: 0 10px 22px rgba(0,0,0,.35), 0 0 0 6px rgba(0,195,255,.10);
-      cursor:pointer;
-      transition: transform .12s ease;
-    }
-    .setting input[type="range"]::-webkit-slider-thumb:active{ transform: scale(1.12); }
-
-    .range-value{
-      min-width:60px;
-      text-align:center;
-      padding:10px 12px;
-      border-radius:14px;
-      font-weight:900;
-      letter-spacing:.3px;
-      color: var(--text);
-      background: rgba(255,255,255,.06);
-      outline: 1px solid rgba(255,255,255,.10);
-      box-shadow: 0 10px 22px rgba(0,0,0,.18);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-    }
-    body[data-theme="light"] .range-value{
-      background: rgba(0,0,0,.03);
-      outline: 1px solid rgba(0,0,0,.10);
-      box-shadow: 0 10px 20px rgba(0,0,0,.08);
-    }
-
-    /* Premium u-select */
-    .u-select{ position:relative; width:min(360px, 76vw); }
-    .u-select-btn{
-      width:100%;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
-      padding:12px 14px;
-      border-radius:18px;
-      cursor:pointer;
-      border:1px solid rgba(255,255,255,.14);
-      color:var(--text);
-      background:
-        radial-gradient(120% 180% at 20% 0%, rgba(0,195,255,.20), transparent 55%),
-        linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
-      box-shadow:
-        0 16px 34px rgba(0,0,0,.28),
-        inset 0 0 0 1px rgba(255,255,255,.05);
-      transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
-      user-select:none;
-    }
-    .u-select-btn:hover{
-      transform: translateY(-1px);
-      border-color: rgba(0,195,255,.26);
-      box-shadow:
-        0 18px 38px rgba(0,0,0,.34),
-        0 0 0 5px rgba(0,195,255,.10),
-        inset 0 0 0 1px rgba(255,255,255,.06);
-    }
-    .u-select-btn i{ opacity:.9; transition: transform .18s ease; }
-    .u-select.open .u-select-btn i{ transform: rotate(180deg); }
-
-    .u-select-menu{
-      position:absolute;
-      top: calc(100% + 10px);
-      left:0;
-      width:100%;
-      padding:10px;
-      border-radius:18px;
-      z-index: 999999;
-      background: rgba(10,10,14,.82);
-      border:1px solid rgba(255,255,255,.12);
-      box-shadow: 0 28px 60px rgba(0,0,0,.55);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      opacity:0;
-      transform: translateY(-6px) scale(.98);
-      pointer-events:none;
-      transition: opacity .16s ease, transform .16s ease;
-    }
-    .u-select.open .u-select-menu{
-      opacity:1;
-      transform: translateY(0) scale(1);
-      pointer-events:auto;
-    }
-    /* ✅ Dropdown overlap fix */
-    .u-select{ position: relative; z-index: 1; }
-    .u-select.open{ z-index: 999999; }
-
-    .u-option{
-      width:100%;
-      display:flex;
-      align-items:baseline;
-      justify-content:space-between;
-      gap:12px;
-      padding:12px 12px;
-      border-radius:14px;
-      border:none;
-      cursor:pointer;
-      color:#fff;
-      background: transparent;
-      text-align:left;
-      transition: background .14s ease, transform .12s ease;
-    }
-    .u-option span{ font-weight:900; letter-spacing:.2px; }
-    .u-option small{ opacity:.75; font-weight:700; }
-    .u-option:hover{ background: rgba(0,195,255,.14); transform: translateY(-1px); }
-    .u-option.active{ background: rgba(0,195,255,.22); outline:1px solid rgba(0,195,255,.25); }
-
-    body[data-theme="light"] .u-select-menu{
-      background: rgba(255,255,255,.88);
-      border:1px solid rgba(0,0,0,.10);
-    }
-    body[data-theme="light"] .u-option{ color:#0b0b12; }
-    body[data-theme="light"] .u-option:hover{ background: rgba(10,163,216,.12); }
-    body[data-theme="light"] .u-option.active{
-      background: rgba(10,163,216,.18);
-      outline:1px solid rgba(10,163,216,.20);
-    }
-
-    /* Auth Modal */
-    .modal{ position:fixed; inset:0; z-index:999; display:none; }
-    .modal.open{display:block;}
-    .modal-backdrop{
-      position:absolute; inset:0;
-      background:rgba(0,0,0,.72);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-    }
-    .modal-card{
-      position:absolute;
-      left:50%; top:50%;
-      transform:translate(-50%,-50%);
-      width:min(92vw, 460px);
-      border-radius:22px;
-      background:#0b0b0e;
-      color:#fff;
-      border:1px solid rgba(255,255,255,.10);
-      box-shadow:0 0 50px rgba(0,0,0,.75);
-      padding:22px 22px 18px;
-    }
-    .modal-close{
-      position:absolute;
-      right:14px; top:12px;
-      width:36px; height:36px;
-      border-radius:12px;
-      border:1px solid rgba(255,255,255,.10);
-      background:rgba(255,255,255,.04);
-      color:#fff;
-      cursor:pointer;
-      font-size:1.05rem;
-    }
-    .modal-close:hover{ background:rgba(255,255,255,.10); }
-    .modal-head h2{
-      font-family:Orbitron, sans-serif;
-      font-size:1.35rem;
-      letter-spacing:.6px;
-      margin-bottom:6px;
-    }
-    .modal-head p{
-      color:rgba(255,255,255,.75);
-      line-height:1.5;
-      margin-bottom:16px;
-    }
-    .auth-form{
-      display:grid;
-      gap:10px;
-    }
-    .auth-form label{
-      font-size:.85rem;
-      color:rgba(255,255,255,.72);
-      margin-top:4px;
-    }
-    .auth-form input{
-      width:100%;
-      padding:12px 12px;
-      border-radius:14px;
-      border:1px solid rgba(255,255,255,.10);
-      background:rgba(255,255,255,.04);
-      color:#fff;
-      outline:none;
-    }
-    /* ✅ Terms checkbox */
-    .terms-check{
-      display:flex;
-      align-items:flex-start;
-      gap:10px;
-      margin-top:8px;
-      font-size:.92rem;
-      color:rgba(255,255,255,.80);
-      user-select:none;
-    }
-    .terms-check input{
-      width:18px;
-      height:18px;
-      margin-top:2px;
-      accent-color: var(--accent);
-      cursor:pointer;
-    }
-    .terms-check a{
-      color: var(--accent);
-      font-weight:800;
-      text-decoration:none;
-    }
-    .terms-check a:hover{
-      text-decoration:underline;
-    }
-
-    .auth-actions{ display:flex; gap:10px; margin-top:8px; }
-    .auth-btn{
-      border:none; border-radius:14px;
-      padding:10px 14px;
-      font-weight:900;
-      cursor:pointer;
-      transition:.2s ease;
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      gap:10px;
-      user-select:none;
-    }
-    .auth-btn.primary{ background:#fff; color:#000; flex:1; }
-    .auth-btn.ghost{ background:transparent; color:#fff; border:1px solid rgba(255,255,255,.14); flex:1; }
-    .auth-btn.google{
-      background:rgba(255,255,255,.06);
-      color:#fff;
-      border:1px solid rgba(255,255,255,.12);
-      width:100%;
-    }
-    .auth-btn.logout{
-      background:rgba(255,255,255,.06);
-      color:#fff;
-      border:1px solid rgba(255,255,255,.12);
-      width:100%;
-      display:none;
-    }
-    .auth-btn:disabled{
-      opacity:.45;
-      cursor:not-allowed;
-      transform:none !important;
-    }
-    .auth-btn:hover{ transform:translateY(-1px); }
-    .auth-btn:active{ transform:scale(.98); }
-
-    .auth-divider{ position:relative; margin:6px 0 2px; height:18px; }
-    .auth-divider::before{
-      content:"";
-      position:absolute; left:0; right:0; top:50%;
-      height:1px; background:rgba(255,255,255,.10);
-    }
-    .auth-divider span{
-      position:absolute; left:50%; top:50%;
-      transform:translate(-50%,-50%);
-      padding:0 10px;
-      background:#0b0b0e;
-      color:rgba(255,255,255,.65);
-      font-size:.85rem;
-    }
-    .auth-msg{ margin-top:8px; color:rgba(255,255,255,.75); font-size:.92rem; min-height:20px; }
-    .auth-success{
-      margin-top:10px;
-      display:none;
-      align-items:center;
-      gap:10px;
-      padding:12px 14px;
-      border-radius:16px;
-      background:rgba(255,255,255,.06);
-      outline:1px solid rgba(255,255,255,.12);
-    }
-    .auth-success i{ color:#7CFFB2; text-shadow:0 0 18px rgba(124,255,178,.35); font-size:1.2rem; }
-
-    /* Tap ripple */
-    .tap-ripple{
-      position:fixed;
-      width:14px;height:14px;
-      border-radius:50%;
-      transform:translate(-50%,-50%);
-      pointer-events:none;
-      z-index:9999;
-      border:1px solid rgba(0,195,255,.9);
-      box-shadow:0 0 18px rgba(0,195,255,.6);
-      animation:ripple var(--rippleDur, .45s) ease-out forwards;
-    }
-    @keyframes ripple{
-      from{opacity:1;transform:translate(-50%,-50%) scale(1)}
-      to{opacity:0;transform:translate(-50%,-50%) scale(var(--rippleScale))}
-    }
-
-    @media(max-width:800px){
-      header{font-size:1.55rem;padding:12px 26px;top:18px}
-      .hero-tagline{font-size:1.02rem}
-      .btn{padding:13px 34px}
-      .about-roles{grid-template-columns:1fr}
-      .page{padding: calc(var(--headerH) + 36px) 6% calc(var(--footerH) + 56px);}
-    }
-    @media(max-width:520px){
-      header{font-size:1.25rem;padding:10px 18px}
-      footer{bottom:16px;width:92%;padding:8px 10px}
-      footer i{font-size:1.35rem;padding:10px}
-      .section-title h2{font-size:2rem}
-      .asset-card{height:220px}
-      .badge{margin-left:0}
-    }
-
-    /* Settings title + back layout */
-    .settings-title-row{
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin: 6px 0 18px; /* 👈 appearance ke upar gap control */
-    }
-
-    .settings-title-text{
-      text-align: center;
-      flex: 1;
-    }
-
-    .settings-title-text h2{
-      margin: 0;
-    }
-
-    .settings-title-text p{
-      margin: 6px 0 0;
-    }
-
-    /* Back button refine */
-    /* ✅ Back button hover animation */
-    .back-btn{
-      padding: 8px 10px;
-      border-radius: 12px;
-      font-size: 1rem;
-      transition: transform .18s ease, box-shadow .18s ease, background .18s ease, outline-color .18s ease;
-      outline: 1px solid rgba(255,255,255,.12);
-    }
-
-    .back-btn:hover{
-      transform: translateY(-2px) scale(1.03);
-      box-shadow: 0 14px 30px rgba(0,0,0,.35), 0 0 0 5px rgba(0,195,255,.10);
-      outline-color: rgba(0,195,255,.30);
-      background: rgba(0,195,255,.08);
-    }
-
-    .back-btn:active{
-      transform: scale(.96);
-      box-shadow: 0 8px 18px rgba(0,0,0,.25);
-    }
-
-    .back-spacer{ width:44px; }
-  </style>
-</head>
-
-<body data-theme="dark" data-ui="normal">
-
-  <header>NETROAR STUDIO</header>
-
-  <!-- HOME -->
-  <section id="home" class="page active">
-    <div class="hero-video">
-      <video src="bg.mp4" muted autoplay loop playsinline></video>
-    </div>
-    <div class="hero-overlay">
-      <p class="hero-tagline">Free Editing Assets for Modern Creators</p>
-      <button class="btn" id="ctaAssets">
-        <i class="fa-solid fa-folder-open"></i>
-        Explore Assets
-      </button>
-    </div>
-  </section>
-
-  <!-- ASSETS -->
-  <section id="assets" class="page scrollable">
-    <div class="section-title">
-      <h2>Assets Library</h2>
-      <p>Browse freely. Open/Download requires sign in.</p>
-    </div>
-
-    <div class="asset-filters">
-      <button class="active" data-filter="all">All</button>
-      <button data-filter="backgrounds">Backgrounds</button>
-      <button data-filter="overlays">Overlays</button>
-      <button data-filter="music">Music</button>
-      <button data-filter="sfx">SFX</button>
-    </div>
-
-    <div class="assets-grid">
-      <div class="asset-card" data-category="backgrounds">
-        <span class="asset-badge">BACKGROUND</span>
-        <img class="thumb" src="mb.jpg" alt="Motion Backgrounds">
-        <video class="preview-video" src="preview1.mp4" muted loop preload="metadata"></video>
-        <div class="overlay">
-          <h3>Motion Backgrounds</h3>
-          <div class="asset-actions">
-            <button class="asset-btn primary requires-auth" data-action="open" data-item="Motion Backgrounds">Open</button>
-            <button class="asset-btn ghost requires-auth" data-action="download" data-item="Motion Backgrounds">Download</button>
-          </div>
-        </div>
+    <!-- ASSETS -->
+    <!-- ASSETS -->
+    <section id="assets" class="page scrollable">
+      <div class="section-title">
+        <h2>Assets Library</h2>
+        <p>Browse freely. Open/Download requires sign in.</p>
       </div>
 
-      <div class="asset-card" data-category="overlays">
-        <span class="asset-badge">OVERLAY</span>
-        <img class="thumb" src="overlay.jpg" alt="Overlays & Transitions">
-        <video class="preview-video" src="preview2.mp4" muted loop preload="metadata"></video>
-        <div class="overlay">
-          <h3>Overlays & Transitions</h3>
-          <div class="asset-actions">
-            <button class="asset-btn primary requires-auth" data-action="open" data-item="Overlays & Transitions">Open</button>
-            <button class="asset-btn ghost requires-auth" data-action="download" data-item="Overlays & Transitions">Download</button>
-          </div>
-        </div>
+      <div class="asset-filters">
+        <button class="active" data-filter="all">All</button>
+        <button data-filter="backgrounds">Backgrounds</button>
+        <button data-filter="overlays">Overlays</button>
+        <button data-filter="music">Music</button>
+        <button data-filter="sfx">SFX</button>
       </div>
 
-      <div class="asset-card" data-category="sfx">
-        <span class="asset-badge">SFX</span>
-        <img class="thumb" src="sfx.jpg" alt="Sound Effects">
-        <video class="preview-video" src="preview3.mp4" muted loop preload="metadata"></video>
-        <div class="overlay">
-          <h3>Sound Effects</h3>
-          <div class="asset-actions">
-            <button class="asset-btn primary requires-auth" data-action="open" data-item="Sound Effects">Open</button>
-            <button class="asset-btn ghost requires-auth" data-action="download" data-item="Sound Effects">Download</button>
-          </div>
+      <!-- ================= OFFICIAL ASSETS ================= -->
+      <h3 class="official-title">
+        <span>Netroar Official Assets</span>
+
+        <div class="official-actions">
+          <span class="show-all">Show all →</span>
+          <span class="add-official" title="Add asset">+</span>
         </div>
-      </div>
+      </h3>
 
-      <div class="asset-card" data-category="music">
-        <span class="asset-badge">MUSIC</span>
-        <img class="thumb" src="mb.jpg" alt="Background Music">
-        <video class="preview-video" src="preview1.mp4" muted loop preload="metadata"></video>
-        <div class="overlay">
-          <h3>Background Music</h3>
-          <div class="asset-actions">
-            <button class="asset-btn primary requires-auth" data-action="open" data-item="Background Music">Open</button>
-            <button class="asset-btn ghost requires-auth" data-action="download" data-item="Background Music">Download</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
+      <div class="official-scroll" id="officialScroll">
+        <div class="asset-card official">
+          <span class="asset-badge official-badge">OFFICIAL</span>
+          <img class="thumb" src="mb.jpg" alt="Motion Backgrounds" />
+          <div class="overlay">
+            <h3>Motion Backgrounds</h3>
+            <p class="official-sub">Netroar Studio • Curated</p>
 
-  <!-- ABOUT -->
-  <section id="about" class="page scrollable">
-    <div class="about-inner">
-      <h2>About Netroar Studio</h2>
-      <p class="about-main">
-        Netroar Studio is a creator-focused asset platform. Our goal is simple:
-        provide clean, practical editing resources that help creators work faster
-        and make better visuals.
-      </p>
-
-      <div class="about-roles">
-        <div class="role">
-          <h3>Owner · Editor</h3>
-          <p>
-            A passionate editor with real content-creation experience.
-            Every asset is curated with an editor’s eye — quality, usability,
-            and creative impact first.
-          </p>
-        </div>
-        <div class="role">
-          <h3>Co-Owner · Software Developer (Beginner)</h3>
-          <p>
-            A beginner developer building this platform step by step.
-            Focused on improving performance, layout, and user experience
-            with every update.
-          </p>
-        </div>
-      </div>
-
-      <p class="about-tagline">Built honestly. Improved continuously.</p>
-    </div>
-  </section>
-
-  <!-- PROFILE -->
-  <section id="profile" class="page scrollable">
-    <div class="section-title">
-      <h2>Your Profile</h2>
-      <p>Account, unlock status, and recent activity.</p>
-    </div>
-
-    <div class="profile-wrap">
-      <div class="card">
-        <div class="profile-top">
-          <div class="avatar" id="pAvatar">NS</div>
-          <div class="p-meta">
-            <h3 id="pName">Guest</h3>
-            <p id="pEmail">Sign in to see your profile</p>
-          </div>
-          <div class="badge" id="pBadge">SIGNED OUT</div>
-        </div>
-
-        <div class="row">
-          <button class="btn2 primary" id="goSettings"><i class="fa-solid fa-gear"></i> Settings</button>
-          <button class="btn2 ghost" id="pLogin"><i class="fa-solid fa-right-to-bracket"></i> Sign in</button>
-          <button class="btn2 ghost" id="pLogout" style="display:none;"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
-        </div>
-      </div>
-
-      <div class="card">
-        <h3 style="font-family:Orbitron,sans-serif;margin-bottom:10px;">Unlock status</h3>
-        <div class="status-grid">
-          <div class="status">
-            <b>Assets access</b>
-            <small id="unlockAssets">Browse: ✅ • Open/Download: 🔒 (sign in)</small>
-          </div>
-          <div class="status">
-            <b>Downloads</b>
-            <small id="unlockDownloads">Sign in required</small>
-          </div>
-        </div>
-      </div>
-
-      <div class="card">
-        <h3 style="font-family:Orbitron,sans-serif;margin-bottom:10px;">Recent downloads</h3>
-        <div class="list" id="downloadList"></div>
-        <p style="color:var(--muted);opacity:.85;margin-top:10px;font-size:.95rem;">
-          (For now this is stored on your device. Later we can sync it to database.)
-        </p>
-      </div>
-    </div>
-  </section>
-
-  <!-- SETTINGS -->
-  <section id="settings" class="page scrollable">
-    
-    <div class="section-title settings-title-row">
-
-      <!-- BACK BUTTON -->
-      <button class="btn2 ghost back-btn" id="settingsBack" title="Back">
-        <i class="fa-solid fa-arrow-left"></i>
-      </button>
-
-      <!-- TITLE -->
-      <div class="settings-title-text">
-        <h2>Settings</h2>
-        <p>Theme, tap sound, animation, and UI size.</p>
-      </div>
-
-    </div>
-
-
-    <div class="settings-wrap">
-      <div class="card">
-        <h3 style="font-family:Orbitron,sans-serif;margin-bottom:10px;">Appearance</h3>
-
-        <div class="setting">
-          <div class="left">
-            <b>Theme</b>
-            <small>Dark / Light</small>
-          </div>
-          <div class="u-select" data-bind="theme">
-            <button class="u-select-btn" type="button">
-              <span class="u-select-label" id="themeLabel">Dark</span>
-              <i class="fa-solid fa-chevron-down"></i>
-            </button>
-            <div class="u-select-menu">
-              <button type="button" class="u-option" data-value="dark">
-                <span>Dark</span><small>Default</small>
-              </button>
-              <button type="button" class="u-option" data-value="light">
-                <span>Light</span><small>Clean</small>
-              </button>
+            <div class="asset-actions">
+              <button class="asset-btn primary">Open</button>
+              <button class="asset-btn ghost">Download</button>
             </div>
           </div>
         </div>
 
-        <div class="setting">
-          <div class="left">
-            <b>UI size</b>
-            <small>Small / Normal / Large</small>
-          </div>
-          <div class="u-select" data-bind="ui">
-            <button class="u-select-btn" type="button">
-              <span class="u-select-label" id="uiLabel">Normal</span>
-              <i class="fa-solid fa-chevron-down"></i>
-            </button>
-            <div class="u-select-menu">
-              <button type="button" class="u-option" data-value="small">
-                <span>Small</span><small>Compact</small>
-              </button>
-              <button type="button" class="u-option" data-value="normal">
-                <span>Normal</span><small>Default</small>
-              </button>
-              <button type="button" class="u-option" data-value="large">
-                <span>Large</span><small>Easy tap</small>
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
+        <div class="asset-card official">
+          <span class="asset-badge official-badge">OFFICIAL</span>
+          <img class="thumb" src="overlay.jpg" alt="Premium Overlays" />
+          <div class="overlay">
+            <h3>Premium Overlays</h3>
+            <p class="official-sub">Netroar Studio • Curated</p>
 
-      <div class="card">
-        <h3 style="font-family:Orbitron,sans-serif;margin-bottom:10px;">Tap feedback</h3>
-
-        <div class="setting">
-          <div class="left">
-            <b>Tap sound</b>
-            <small>Enable/disable click sound</small>
-          </div>
-          <label class="toggle">
-            <input type="checkbox" id="setSoundOn" checked>
-            <span>On</span>
-          </label>
-        </div>
-
-        <div class="setting">
-          <div class="left">
-            <b>Sound type</b>
-            <small>Beep / Soft / Click</small>
-          </div>
-
-          <div class="u-select" data-bind="soundType">
-            <button class="u-select-btn" type="button">
-              <span class="u-select-label" id="soundTypeLabel">Beep (default)</span>
-              <i class="fa-solid fa-chevron-down"></i>
-            </button>
-
-            <div class="u-select-menu">
-              <button type="button" class="u-option" data-value="beep">
-                <span>Beep (default)</span><small>Sharp</small>
-              </button>
-              <button type="button" class="u-option" data-value="soft">
-                <span>Soft</span><small>Smooth</small>
-              </button>
-              <button type="button" class="u-option" data-value="click">
-                <span>Click</span><small>Short</small>
-              </button>
+            <div class="asset-actions">
+              <button class="asset-btn primary">Open</button>
+              <button class="asset-btn ghost">Download</button>
             </div>
           </div>
         </div>
 
+        <div class="asset-card official">
+          <span class="asset-badge official-badge">OFFICIAL</span>
+          <img class="thumb" src="sfx.jpg" alt="Sound Effects" />
+          <div class="overlay">
+            <h3>Sound Effects</h3>
+            <p class="official-sub">Netroar Studio • Curated</p>
 
-        <div class="setting">
-          <div class="left">
-            <b>Sound volume</b>
-            <small>Default 60%</small>
-          </div>
-          <div class="range-wrap">
-            <input id="setVolume" type="range" min="0" max="100" value="60" />
-            <div class="range-value" id="volValue">60%</div>
+            <div class="asset-actions">
+              <button class="asset-btn primary">Open</button>
+              <button class="asset-btn ghost">Download</button>
+            </div>
           </div>
         </div>
       </div>
+      <!-- ================= END OFFICIAL ================= -->
+      <!-- ================= CREATOR ASSETS (UNCHANGED) ================= -->
+      <!-- ================= CREATOR ASSETS TITLE ================= -->
+      <h3 class="creator-title">
+        <span> Creator Assets</span>
+        <span class="creator-add-official" id="creatorAddBtn">＋</span>
+      </h3>
 
-      <div class="card">
-        <h3 style="font-family:Orbitron,sans-serif;margin-bottom:10px;">Animations</h3>
-
-        <div class="setting">
-          <div class="left">
-            <b>Animations</b>
-            <small>Enable/disable animations</small>
-          </div>
-          <label class="toggle">
-            <input type="checkbox" id="setAnimOn" checked>
-            <span>On</span>
-          </label>
-        </div>
-
-        <div class="setting">
-          <div class="left">
-            <b>Intensity</b>
-            <small>Low / Medium / High (default: Medium)</small>
-          </div>
-
-          <div class="u-select" data-bind="animIntensity">
-            <button class="u-select-btn" type="button">
-              <span class="u-select-label" id="animIntensityLabel">Medium (default)</span>
-              <i class="fa-solid fa-chevron-down"></i>
-            </button>
-
-            <div class="u-select-menu">
-              <button type="button" class="u-option" data-value="low">
-                <span>Low</span><small>Subtle</small>
-              </button>
-              <button type="button" class="u-option" data-value="med">
-                <span>Medium (default)</span><small>Balanced</small>
-              </button>
-              <button type="button" class="u-option" data-value="high">
-                <span>High</span><small>More motion</small>
-              </button>
+      <div class="assets-grid" id="creatorAssets">
+        <div class="asset-card" data-category="backgrounds">
+          <span class="asset-badge">BACKGROUND</span>
+          <img class="thumb" src="mb.jpg" alt="Motion Backgrounds" />
+          <video
+            class="preview-video"
+            src="preview1.mp4"
+            muted
+            loop
+            preload="metadata"
+          ></video>
+          <div class="overlay">
+            <h3>Motion Backgrounds</h3>
+            <div class="asset-actions">
+              <button class="asset-btn primary requires-auth">Open</button>
+              <button class="asset-btn ghost requires-auth">Download</button>
             </div>
           </div>
         </div>
 
-      </div>
-    </div>
-  </section>
-
-  <!-- AUTH MODAL -->
-  <div id="authModal" class="modal">
-    <div class="modal-backdrop"></div>
-
-    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="authTitle">
-      <button class="modal-close" id="authClose" aria-label="Close">✕</button>
-
-      <div class="modal-head">
-        <h2 id="authTitle">Sign in</h2>
-        <p id="authReason">Sign in to continue.</p>
-      </div>
-
-      <!-- ✅ form wrapper (password warning fixed) -->
-      <form class="auth-form" id="authForm" autocomplete="on">
-        <label>Email</label>
-        <input id="authEmail" type="email" placeholder="you@example.com" autocomplete="email" />
-
-        <label>Password</label>
-        <input id="authPassword" type="password" placeholder="••••••••" autocomplete="current-password" />
-
-        <div class="auth-actions">
-          <button class="auth-btn primary" id="btnLogin" type="button">Sign in</button>
-          <button class="auth-btn ghost" id="btnSignup" type="button">Create</button>
+        <div class="asset-card" data-category="overlays">
+          <span class="asset-badge">OVERLAY</span>
+          <img class="thumb" src="overlay.jpg" alt="Overlays & Transitions" />
+          <video
+            class="preview-video"
+            src="preview2.mp4"
+            muted
+            loop
+            preload="metadata"
+          ></video>
+          <div class="overlay">
+            <h3>Overlays & Transitions</h3>
+            <div class="asset-actions">
+              <button class="asset-btn primary requires-auth">Open</button>
+              <button class="asset-btn ghost requires-auth">Download</button>
+            </div>
+          </div>
         </div>
-        <!-- ✅ Terms checkbox (required) -->
-        <label class="terms-check">
-          <input type="checkbox" id="termsOk">
-          <span>
-            I agree to the
-            <a href="terms.html?from=auth" onclick="return safeOpenTerms()">Terms & Conditions</a>
-          </span>
-        </label>
 
-        <div class="auth-divider"><span>or</span></div>
+        <div class="asset-card" data-category="sfx">
+          <span class="asset-badge">SFX</span>
+          <img class="thumb" src="sfx.jpg" alt="Sound Effects" />
+          <video
+            class="preview-video"
+            src="preview3.mp4"
+            muted
+            loop
+            preload="metadata"
+          ></video>
+          <div class="overlay">
+            <h3>Sound Effects</h3>
+            <div class="asset-actions">
+              <button class="asset-btn primary requires-auth">Open</button>
+              <button class="asset-btn ghost requires-auth">Download</button>
+            </div>
+          </div>
+        </div>
 
-        <button class="auth-btn google" id="btnGoogle" type="button">
-          <i class="fa-brands fa-google"></i>
-          Continue with Google
+        <div class="asset-card" data-category="music">
+          <span class="asset-badge">MUSIC</span>
+          <img class="thumb" src="mb.jpg" alt="Background Music" />
+          <video
+            class="preview-video"
+            src="preview1.mp4"
+            muted
+            loop
+            preload="metadata"
+          ></video>
+          <div class="overlay">
+            <h3>Background Music</h3>
+            <div class="asset-actions">
+              <button class="asset-btn primary requires-auth">Open</button>
+              <button class="asset-btn ghost requires-auth">Download</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- ================= OFFICIAL ASSETS (FULL VIEW) ================= -->
+    <section id="official-full" class="page scrollable">
+      <div class="section-title settings-title-row">
+        <!-- BACK BUTTON -->
+        <button class="btn2 ghost back-btn" id="officialBack" title="Back">
+          <i class="fa-solid fa-arrow-left"></i>
         </button>
 
-        <button class="auth-btn logout" id="btnLogout" type="button">Logout</button>
-
-        <p id="authMsg" class="auth-msg"></p>
-
-        <div class="auth-success" id="authSuccess">
-          <i class="fa-solid fa-circle-check"></i>
-          <span id="authSuccessText">Signed in</span>
+        <div class="settings-title-text">
+          <h2>Official Assets</h2>
+          <p>Curated premium assets by Netroar Studio.</p>
         </div>
-      </form>
-    </div>
-  </div>
-  <!-- TERMS -->
-  <!-- <section id="terms" class="page scrollable">
-    <div class="section-title settings-title-row">
-      <button class="btn2 ghost back-btn" id="termsBack" title="Back">
-        <i class="fa-solid fa-arrow-left"></i>
-      </button>
+      </div>
 
-      <div class="settings-title-text">
-        <h2>Terms & Conditions</h2>
-        <p>Please read carefully before using Netroar Studio.</p>
+      <div class="assets-grid official-vertical" id="officialFullGrid">
+        <!-- JS yahan official cards clone karega -->
+      </div>
+    </section>
+    <!-- ================= END ================= -->
+    <section id="search" class="page scrollable">
+      <div class="section-title">
+        <h2>Search</h2>
+        <p>Profiles • Assets • Tags</p>
+      </div>
+
+      <!-- SEARCH BAR -->
+      <div class="search-box">
+        <input
+          type="text"
+          id="searchInput"
+          placeholder="Search profiles, assets, tags..."
+        />
+      </div>
+
+      <!-- FILTERS -->
+      <div class="asset-filters search-filters">
+        <button class="active" data-type="profiles">Profiles</button>
+        <button data-type="image">Images</button>
+        <button data-type="video">Videos</button>
+        <button data-type="sound">Sounds</button>
+        <button data-type="tag">Tags</button>
+      </div>
+
+      <!-- RESULTS -->
+      <div id="searchResults" class="assets-grid"></div>
+    </section>
+
+    <!-- ABOUT -->
+    <section id="about" class="page scrollable">
+      <div class="about-inner">
+        <h2>About Netroar Studio</h2>
+        <p class="about-main">
+          Netroar Studio is a creator-focused asset platform. Our goal is
+          simple: provide clean, practical editing resources that help creators
+          work faster and make better visuals.
+        </p>
+
+        <div class="about-roles">
+          <div class="role">
+            <h3>Owner · Editor(Void)</h3>
+            <p>
+              A passionate editor with real content-creation experience. Every
+              asset is curated with an editor’s eye — quality, usability, and
+              creative impact first.
+            </p>
+          </div>
+          <div class="role">
+            <h3>Co-Owner · Software Developer (Beginner)</h3>
+            <p>
+              A beginner developer building this platform step by step. Focused
+              on improving performance, layout, and user experience with every
+              update.
+            </p>
+          </div>
+        </div>
+
+        <p class="about-tagline">Built honestly. Improved continuously.</p>
+      </div>
+    </section>
+
+    <!-- PROFILE -->
+    <section id="profile" class="page scrollable">
+      <div class="section-title">
+        <h2>Your Profile</h2>
+        <p>Account, unlock status, and recent activity.</p>
+      </div>
+
+      <div class="profile-wrap">
+        <div class="card">
+          <div class="profile-top">
+            <div class="avatar" id="pAvatar">NS</div>
+            <div class="p-meta">
+              <h3 id="pName">Guest</h3>
+              <p id="pEmail">Sign in to see your profile</p>
+            </div>
+            <div class="badge" id="pBadge">SIGNED OUT</div>
+          </div>
+
+          <div class="row">
+            <button class="btn2 primary" id="goSettings">
+              <i class="fa-solid fa-gear"></i> Settings
+            </button>
+            <button class="btn2 ghost" id="pLogin">
+              <i class="fa-solid fa-right-to-bracket"></i> Sign in
+            </button>
+            <button class="btn2 ghost" id="pLogout" style="display: none">
+              <i class="fa-solid fa-right-from-bracket"></i> Logout
+            </button>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3 style="font-family: Orbitron, sans-serif; margin-bottom: 10px">
+            Unlock status
+          </h3>
+          <div class="status-grid">
+            <div class="status">
+              <b>Assets access</b>
+              <small id="unlockAssets"
+                >Browse: ✅ • Open/Download: 🔒 (sign in)</small
+              >
+            </div>
+            <div class="status">
+              <b>Downloads</b>
+              <small id="unlockDownloads">Sign in required</small>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3 style="font-family: Orbitron, sans-serif; margin-bottom: 10px">
+            Recent downloads
+          </h3>
+          <div class="list" id="downloadList"></div>
+          <p
+            style="
+              color: var(--muted);
+              opacity: 0.85;
+              margin-top: 10px;
+              font-size: 0.95rem;
+            "
+          >
+            (For now this is stored on your device. Later we can sync it to
+            database.)
+          </p>
+        </div>
+      </div>
+    </section>
+    <!-- PUBLIC PROFILE -->
+    <section id="public-profile" class="page scrollable">
+      <!-- TOP BAR (BACK BUTTON) -->
+      <div class="settings-title-row">
+        <button class="btn2 ghost back-btn" onclick="history.back()">
+          <i class="fa-solid fa-arrow-left"></i>
+        </button>
+
+        <div class="settings-title-text">
+          <h2>Profile</h2>
+        </div>
+
+        <div class="back-spacer"></div>
+      </div>
+
+      <!-- PROFILE MAIN -->
+      <div class="pp-center">
+        <!-- Avatar -->
+        <div class="profile-plate">
+          <div class="pp-avatar-lg">
+            <img id="ppAvatarImg" src="pp-preview.jpg" alt="Profile Pic" />
+            
+          </div>
+          <!-- Name -->
+          <div class="name-plate">
+            
+
+            <!-- Username -->
+            <h2 class="pp-username">@void_otaku</h2>
+
+            <!-- Status -->
+            <p class="pp-status">🎧 Sound Designer | SFX Lover</p>
+          </div>
+        </div>
+        
+        
+
+        <!-- STATS -->
+        <div class="pp-stats">
+          <div>
+            <strong>128</strong>
+            <span>CONNECTS</span>
+          </div>
+          <div>
+            <strong>4</strong>
+            <span>CIRCLES</span>
+          </div>
+        </div>
+
+        <!-- ACTIONS -->
+        <div class="pp-actions">
+          <button class="btn2 primary">CONNECT</button>
+          <button class="btn2 ghost">CHAT</button>
+          <button class="btn2 ghost">SHARE</button>
+        </div>
+
+        <!-- ABOUT -->
+        <div class="pp-about-center">
+          <h3>About</h3>
+          <p>Just started my editing journey.</p>
+
+          <h4>Interests</h4>
+          <p class="pp-hashtags">#Transitions #Reels</p>
+
+          <h4>Hobbies</h4>
+          <p>Music • Gaming • Editing</p>
+        </div>
+
+        <!-- META -->
+        <div class="pp-footer">
+          <p>UID: 1234567890</p>
+          <p>Joined: 30 Jan 2026</p>
+          <p>Country: India 🇮🇳</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SETTINGS -->
+    <section id="settings" class="page scrollable">
+      <div class="section-title settings-title-row">
+        <!-- BACK BUTTON -->
+        <button class="btn2 ghost back-btn" id="settingsBack" title="Back">
+          <i class="fa-solid fa-arrow-left"></i>
+        </button>
+
+        <!-- TITLE -->
+        <div class="settings-title-text">
+          <h2>Settings</h2>
+          <p>Theme, tap sound, animation, and UI size.</p>
+        </div>
+      </div>
+
+      <div class="settings-wrap">
+        <div class="card">
+          <h3 style="font-family: Orbitron, sans-serif; margin-bottom: 10px">
+            Appearance
+          </h3>
+
+          <div class="setting">
+            <div class="left">
+              <b>Theme</b>
+              <small>Dark / Light</small>
+            </div>
+            <div class="u-select" data-bind="theme">
+              <button class="u-select-btn" type="button">
+                <span class="u-select-label" id="themeLabel">Dark</span>
+                <i class="fa-solid fa-chevron-down"></i>
+              </button>
+              <div class="u-select-menu">
+                <button type="button" class="u-option" data-value="dark">
+                  <span>Dark</span><small>Default</small>
+                </button>
+                <button type="button" class="u-option" data-value="light">
+                  <span>Light</span><small>Clean</small>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="setting">
+            <div class="left">
+              <b>UI size</b>
+              <small>Small / Normal / Large</small>
+            </div>
+            <div class="u-select" data-bind="ui">
+              <button class="u-select-btn" type="button">
+                <span class="u-select-label" id="uiLabel">Normal</span>
+                <i class="fa-solid fa-chevron-down"></i>
+              </button>
+              <div class="u-select-menu">
+                <button type="button" class="u-option" data-value="small">
+                  <span>Small</span><small>Compact</small>
+                </button>
+                <button type="button" class="u-option" data-value="normal">
+                  <span>Normal</span><small>Default</small>
+                </button>
+                <button type="button" class="u-option" data-value="large">
+                  <span>Large</span><small>Easy tap</small>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3 style="font-family: Orbitron, sans-serif; margin-bottom: 10px">
+            Tap feedback
+          </h3>
+
+          <div class="setting">
+            <div class="left">
+              <b>Tap sound</b>
+              <small>Enable/disable click sound</small>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" id="setSoundOn" checked />
+              <span>On</span>
+            </label>
+          </div>
+
+          <div class="setting">
+            <div class="left">
+              <b>Sound type</b>
+              <small>Beep / Soft / Click</small>
+            </div>
+
+            <div class="u-select" data-bind="soundType">
+              <button class="u-select-btn" type="button">
+                <span class="u-select-label" id="soundTypeLabel"
+                  >Beep (default)</span
+                >
+                <i class="fa-solid fa-chevron-down"></i>
+              </button>
+
+              <div class="u-select-menu">
+                <button type="button" class="u-option" data-value="beep">
+                  <span>Beep (default)</span><small>Sharp</small>
+                </button>
+                <button type="button" class="u-option" data-value="soft">
+                  <span>Soft</span><small>Smooth</small>
+                </button>
+                <button type="button" class="u-option" data-value="click">
+                  <span>Click</span><small>Short</small>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="setting">
+            <div class="left">
+              <b>Sound volume</b>
+              <small>Default 60%</small>
+            </div>
+            <div class="range-wrap">
+              <input id="setVolume" type="range" min="0" max="100" value="60" />
+              <div class="range-value" id="volValue">60%</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3 style="font-family: Orbitron, sans-serif; margin-bottom: 10px">
+            Animations
+          </h3>
+
+          <div class="setting">
+            <div class="left">
+              <b>Animations</b>
+              <small>Enable/disable animations</small>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" id="setAnimOn" checked />
+              <span>On</span>
+            </label>
+          </div>
+
+          <div class="setting">
+            <div class="left">
+              <b>Intensity</b>
+              <small>Low / Medium / High (default: Medium)</small>
+            </div>
+
+            <div class="u-select" data-bind="animIntensity">
+              <button class="u-select-btn" type="button">
+                <span class="u-select-label" id="animIntensityLabel"
+                  >Medium (default)</span
+                >
+                <i class="fa-solid fa-chevron-down"></i>
+              </button>
+
+              <div class="u-select-menu">
+                <button type="button" class="u-option" data-value="low">
+                  <span>Low</span><small>Subtle</small>
+                </button>
+                <button type="button" class="u-option" data-value="med">
+                  <span>Medium (default)</span><small>Balanced</small>
+                </button>
+                <button type="button" class="u-option" data-value="high">
+                  <span>High</span><small>More motion</small>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- AUTH MODAL -->
+    <div id="authModal" class="modal">
+      <div class="modal-backdrop"></div>
+
+      <div
+        class="modal-card"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="authTitle"
+      >
+        <button class="modal-close" id="authClose" aria-label="Close">✕</button>
+
+        <div class="modal-head">
+          <h2 id="authTitle">Sign in</h2>
+          <p id="authReason">Sign in to continue.</p>
+        </div>
+
+        <!-- ✅ form wrapper (password warning fixed) -->
+        <form class="auth-form" id="authForm" autocomplete="on">
+          <label>Email</label>
+          <input
+            id="authEmail"
+            type="email"
+            placeholder="you@example.com"
+            autocomplete="email"
+          />
+
+          <label>Password</label>
+          <input
+            id="authPassword"
+            type="password"
+            placeholder="••••••••"
+            autocomplete="current-password"
+          />
+
+          <div class="auth-actions">
+            <button class="auth-btn primary" id="btnLogin" type="button">
+              Sign in
+            </button>
+            <button class="auth-btn ghost" id="btnSignup" type="button">
+              Create
+            </button>
+          </div>
+          <!-- ✅ Terms checkbox (required) -->
+          <label class="terms-check">
+            <input type="checkbox" id="termsOk" />
+            <span>
+              I agree to the
+              <a href="terms.html?from=auth" onclick="return safeOpenTerms();"
+                >Terms & Conditions</a
+              >
+            </span>
+          </label>
+
+          <div class="auth-divider"><span>or</span></div>
+
+          <button class="auth-btn google" id="btnGoogle" type="button">
+            <i class="fa-brands fa-google"></i>
+            Continue with Google
+          </button>
+
+          <button class="auth-btn logout" id="btnLogout" type="button">
+            Logout
+          </button>
+
+          <p id="authMsg" class="auth-msg"></p>
+
+          <div class="auth-success" id="authSuccess">
+            <i class="fa-solid fa-circle-check"></i>
+            <span id="authSuccessText">Signed in</span>
+          </div>
+        </form>
       </div>
     </div>
-
-    <div class="card" style="max-width:980px;margin:0 auto;">
-      <h3 style="font-family:Orbitron,sans-serif;margin-bottom:10px;">1) Usage</h3>
-      <p style="color:var(--muted);opacity:.92;line-height:1.8;">
-        Yahan apne terms ka text likho...
-      </p>
-
-      <h3 style="font-family:Orbitron,sans-serif;margin:18px 0 10px;">2) Downloads & Licensing</h3>
-      <p style="color:var(--muted);opacity:.92;line-height:1.8;">
-        Yahan apne licensing/usage rules...
-      </p>
-
-      <h3 style="font-family:Orbitron,sans-serif;margin:18px 0 10px;">3) Account</h3>
-      <p style="color:var(--muted);opacity:.92;line-height:1.8;">
-        Yahan account related terms...
-      </p>
-
-      <h3 style="font-family:Orbitron,sans-serif;margin:18px 0 10px;">4) Contact</h3>
-      <p style="color:var(--muted);opacity:.92;line-height:1.8;">
-        Support email / contact info...
-      </p>
+    <!-- + filter -->
+    <div class="creator-add-menu" id="creatorAddMenu" style="display: none">
+      <div class="add-option" data-type="image">🖼 Image Asset</div>
+      <div class="add-option" data-type="video">🎥 Video Asset</div>
+      <div class="add-option" data-type="sound">🔊 Sound Asset</div>
     </div>
-  </section> -->
 
-  <footer>
-    <i class="fa fa-home active" data-page="home" title="Home"></i>
-    <i class="fa fa-folder" data-page="assets" title="Assets"></i>
-    <i class="fa fa-user" data-page="about" title="About"></i>
-    <i class="fa fa-id-badge" data-page="profile" title="Profile"></i>
-  </footer>
-
-  <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-  import {
-    getAuth,
-    onAuthStateChanged,
-    signInWithEmailAndPassword,
-    createUserWithEmailAndPassword,
-    signOut,
-    GoogleAuthProvider,
-    signInWithPopup
-  } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
-
-  /* =======================
-     1) PASTE CONFIG HERE ✅
-     ======================= */
-  const firebaseConfig = {
-    apiKey: "PASTE_HERE",
-    authDomain: "PASTE_HERE",
-    projectId: "PASTE_HERE",
-    appId: "PASTE_HERE"
-  };
-
-  function isFirebaseConfigured(cfg) {
-    const vals = [cfg.apiKey, cfg.authDomain, cfg.projectId, cfg.appId].map(v => (v || "").trim());
-    if (vals.some(v => !v)) return false;
-    if (vals.some(v => v.includes("PASTE_HERE"))) return false;
-    return true;
-  }
-
-  // Firebase init (safe)
-  let app = null;
-  let auth = null;
-  let provider = null;
-  const firebaseReady = isFirebaseConfigured(firebaseConfig);
-
-  if (firebaseReady) {
-    app = initializeApp(firebaseConfig);
-    auth = getAuth(app);
-    provider = new GoogleAuthProvider();
-  } else {
-    console.warn("Firebase config missing. Auth will be disabled until you paste real config.");
-  }
-
-  /* ---------- SETTINGS STORAGE ---------- */
-  const SETTINGS_KEY = "ns_settings_v1";
-  const DEFAULT_SETTINGS = {
-    theme: "dark",
-    ui: "normal",
-    soundOn: true,
-    soundType: "beep",
-    volume: 60,
-    animOn: true,
-    animIntensity: "med"
-  };
-
-  function loadSettings() {
-    try {
-      const raw = localStorage.getItem(SETTINGS_KEY);
-      if (!raw) return { ...DEFAULT_SETTINGS };
-      const parsed = JSON.parse(raw);
-      return { ...DEFAULT_SETTINGS, ...parsed };
-    } catch {
-      return { ...DEFAULT_SETTINGS };
-    }
-  }
-
-  function saveSettings(s) {
-    localStorage.setItem(SETTINGS_KEY, JSON.stringify(s));
-  }
-
-  let settings = loadSettings();
-
-  function applySettings() {
-    document.body.dataset.theme = settings.theme;
-    document.body.dataset.ui = settings.ui;
-
-    const animOn = !!settings.animOn;
-    const intensity = settings.animIntensity;
-
-    if (!animOn) {
-      document.documentElement.style.setProperty("--animDur", "0s");
-      document.documentElement.style.setProperty("--rippleDur", "0s");
-      document.documentElement.style.setProperty("--rippleScale", "1");
-    } else {
-      if (intensity === "low") {
-        document.documentElement.style.setProperty("--animDur", ".18s");
-        document.documentElement.style.setProperty("--rippleDur", ".35s");
-        document.documentElement.style.setProperty("--rippleScale", "5");
-      } else if (intensity === "high") {
-        document.documentElement.style.setProperty("--animDur", ".32s");
-        document.documentElement.style.setProperty("--rippleDur", ".55s");
-        document.documentElement.style.setProperty("--rippleScale", "7");
-      } else {
-        document.documentElement.style.setProperty("--animDur", ".25s");
-        document.documentElement.style.setProperty("--rippleDur", ".45s");
-        document.documentElement.style.setProperty("--rippleScale", "6");
-      }
-    }
-  }
-
-  applySettings();
-
-  /* ---------- ELEMENTS ---------- */
-  const header = document.querySelector("header");
-  const pages = document.querySelectorAll(".page");
-  const footerIcons = document.querySelectorAll("footer i[data-page]");
-  const footerEl = document.querySelector("footer");
-  const ctaAssets = document.getElementById("ctaAssets");
-
-  const authModal = document.getElementById("authModal");
-  const authClose = document.getElementById("authClose");
-  const authReason = document.getElementById("authReason");
-  const authMsg = document.getElementById("authMsg");
-  const authSuccess = document.getElementById("authSuccess");
-  const authSuccessText = document.getElementById("authSuccessText");
-
-  const emailEl = document.getElementById("authEmail");
-  const passEl = document.getElementById("authPassword");
-  const btnLogin = document.getElementById("btnLogin");
-  const btnSignup = document.getElementById("btnSignup");
-  const btnGoogle = document.getElementById("btnGoogle");
-  const btnLogout = document.getElementById("btnLogout");
-  // ✅ Terms checkbox elements
-  const termsOk = document.getElementById("termsOk");
-  const openTermsLink = document.getElementById("openTermsLink");
-  const termsBack = document.getElementById("termsBack");
-
-  // Profile elements
-  const pAvatar = document.getElementById("pAvatar");
-  const pName = document.getElementById("pName");
-  const pEmail = document.getElementById("pEmail");
-  const pBadge = document.getElementById("pBadge");
-  const pLogin = document.getElementById("pLogin");
-  const pLogout = document.getElementById("pLogout");
-  const goSettings = document.getElementById("goSettings");
-  const settingsBack = document.getElementById("settingsBack");
-  const downloadList = document.getElementById("downloadList");
-  const unlockDownloads = document.getElementById("unlockDownloads");
-
-  // Settings inputs (these exist in your HTML)
-  const setSoundOn = document.getElementById("setSoundOn");
-  const setVolume = document.getElementById("setVolume");
-  const setAnimOn = document.getElementById("setAnimOn");
-  const volValue = document.getElementById("volValue");
-
-  /* ---------- PAGE SWITCH ---------- */
-  function setActivePage(pageId) {
-    pages.forEach(p => p.classList.remove("active"));
-    const page = document.getElementById(pageId);
-    if (page) page.classList.add("active");
-
-    if (page && page.classList.contains("scrollable")) page.scrollTop = 0;
-    header?.classList.remove("hide");
-
-    footerIcons.forEach(i => i.classList.toggle("active", i.dataset.page === pageId));
-    // ✅ Hide footer on settings page
-    if (footerEl) footerEl.style.display = (pageId === "settings") ? "none" : "flex";
-  }
-
-  footerIcons.forEach(icon => {
-    icon.addEventListener("click", () => setActivePage(icon.dataset.page));
-  });
-
-  ctaAssets?.addEventListener("click", () => setActivePage("assets"));
-
-  /* ---------- Header auto-hide on scroll ---------- */
-  function attachHeaderAutoHide(container) {
-    let last = 0;
-    container.addEventListener(
-      "scroll",
-      () => {
-        if (!settings.animOn) return;
-        const y = container.scrollTop;
-        header?.classList.toggle("hide", y > last && y > 60);
-        last = y;
-      },
-      { passive: true }
-    );
-  }
-  ["assets", "about", "profile", "settings"].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) attachHeaderAutoHide(el);
-  });
-
-  /* ---------- Modal helpers ---------- */
-  let afterLoginGoTo = null;
-
-  function setMsg(t) {
-    if (!authMsg) return;
-    authMsg.textContent = t || "";
-  }
-
-  function openAuthModal(reasonText, goToAfter) {
-    if (!authModal) return;
-    if (authReason) authReason.textContent = reasonText || "Sign in to continue.";
-    setMsg("");
-    if (authSuccess) authSuccess.style.display = "none";
-    afterLoginGoTo = goToAfter || null;
-    authModal.classList.add("open");
-
-    if (termsOk) termsOk.checked = false;
-    updateAuthButtonsState();
-
-    // If firebase not configured, show info immediately
-    if (!firebaseReady) {
-      setMsg("⚠️ Firebase config paste karo (apiKey/authDomain/projectId/appId). Tabhi login kaam karega.");
-    }
-  }
-  termsOk?.addEventListener("change", updateAuthButtonsState);
-  openTermsLink?.addEventListener("click", (e) => {
-    e.preventDefault();
-    closeAuthModal();        // pehle modal band
-    setActivePage("terms");  // terms page open
-  });
-  termsBack?.addEventListener("click", () => {
-    setActivePage("profile"); // ya "settings" if you want
-  });
-
-
-  function closeAuthModal() {
-    if (!authModal) return;
-    authModal.classList.remove("open");
-    afterLoginGoTo = null;
-  }
-
-  authClose?.addEventListener("click", closeAuthModal);
-  authModal?.querySelector(".modal-backdrop")?.addEventListener("click", closeAuthModal);
-
-  function updateAuthButtonsState(){
-    const ok = !!termsOk?.checked;
-
-    if (btnLogin) btnLogin.disabled = !ok;
-    if (btnSignup) btnSignup.disabled = !ok;
-    if (btnGoogle) btnGoogle.disabled = !ok;
-  }
-
-  // Profile sign in/out buttons
-  pLogin?.addEventListener("click", () => openAuthModal("Sign in to view your profile.", "profile"));
-  pLogout?.addEventListener("click", async () => {
-    if (!firebaseReady) return;
-    await signOut(auth);
-    setActivePage("home");
-  });
-  goSettings?.addEventListener("click", () => setActivePage("settings"));
-  settingsBack?.addEventListener("click", () => {
-    setActivePage("profile");
-  });
-
-  /* ---------- Filters ---------- */
-  const filterButtons = document.querySelectorAll(".asset-filters button");
-  const cards = document.querySelectorAll(".asset-card");
-  const assetsSection = document.getElementById("assets");
-
-  filterButtons.forEach(btn => {
-    btn.addEventListener("click", () => {
-      filterButtons.forEach(b => b.classList.remove("active"));
-      btn.classList.add("active");
-
-      const f = btn.dataset.filter;
-      cards.forEach(card => {
-        card.style.display = f === "all" || card.dataset.category === f ? "block" : "none";
-      });
-
-      if (assetsSection) assetsSection.scrollTop = 0;
-      header?.classList.remove("hide");
-    });
-  });
-
-  /* ---------- Preview video (hover + touch friendly) ---------- */
-  document.querySelectorAll(".asset-card").forEach(card => {
-    const video = card.querySelector(".preview-video");
-    if (!video) return;
-
-    card.addEventListener("mouseenter", () => {
-      video.currentTime = 0;
-      video.play().catch(() => {});
-    });
-    card.addEventListener("mouseleave", () => {
-      video.pause();
-      video.currentTime = 0;
-    });
-
-    card.addEventListener(
-      "touchstart",
-      () => {
-        video.currentTime = 0;
-        video.play().catch(() => {});
-      },
-      { passive: true }
-    );
-    card.addEventListener(
-      "touchend",
-      () => {
-        video.pause();
-        video.currentTime = 0;
-      },
-      { passive: true }
-    );
-    card.addEventListener(
-      "touchcancel",
-      () => {
-        video.pause();
-        video.currentTime = 0;
-      },
-      { passive: true }
-    );
-  });
-
-  /* ---------- Downloads history (local) ---------- */
-  const DL_KEY = "ns_downloads_v1";
-
-  function loadDownloads() {
-    try {
-      const raw = localStorage.getItem(DL_KEY);
-      if (!raw) return [];
-      const arr = JSON.parse(raw);
-      return Array.isArray(arr) ? arr : [];
-    } catch {
-      return [];
-    }
-  }
-
-  function saveDownloads(arr) {
-    localStorage.setItem(DL_KEY, JSON.stringify(arr.slice(0, 20)));
-  }
-
-  function pushDownload(item, action) {
-    const arr = loadDownloads();
-    arr.unshift({
-      item,
-      action,
-      time: new Date().toLocaleString()
-    });
-    saveDownloads(arr);
-    renderDownloads();
-  }
-
-  function renderDownloads() {
-    if (!downloadList) return;
-    const arr = loadDownloads().slice(0, 5);
-    downloadList.innerHTML = "";
-    if (arr.length === 0) {
-      downloadList.innerHTML = `<div class="list-item"><b>No downloads yet</b><span>—</span></div>`;
-      return;
-    }
-    arr.forEach(d => {
-      const el = document.createElement("div");
-      el.className = "list-item";
-      el.innerHTML = `<b>${String(d.action).toUpperCase()} • ${d.item}</b><span>${d.time}</span>`;
-      downloadList.appendChild(el);
-    });
-  }
-  renderDownloads();
-
-  /* ---------- AUTH (safe) ---------- */
-  let isAuthed = false;
-  let currentUser = null;
-
-  function renderProfile() {
-    if (!pAvatar || !pName || !pEmail || !pBadge || !pLogin || !pLogout || !unlockDownloads) return;
-
-    if (!isAuthed || !currentUser) {
-      pAvatar.textContent = "NS";
-      pName.textContent = "Guest";
-      pEmail.textContent = "Sign in to see your profile";
-      pBadge.textContent = "SIGNED OUT";
-      pBadge.style.color = "var(--muted)";
-      pLogin.style.display = "inline-flex";
-      pLogout.style.display = "none";
-      unlockDownloads.textContent = "Sign in required";
-      return;
-    }
-
-    const name = currentUser.displayName || "Creator";
-    const email = currentUser.email || "—";
-    const photo = currentUser.photoURL || null;
-
-    if (photo) {
-      pAvatar.innerHTML = `<img src="${photo}" alt="avatar">`;
-    } else {
-      const initials = (name.trim()[0] || "N").toUpperCase();
-      pAvatar.textContent = initials;
-    }
-
-    pName.textContent = name;
-    pEmail.textContent = email;
-    pBadge.textContent = "SIGNED IN";
-    pBadge.style.color = "var(--accent)";
-    pLogin.style.display = "none";
-    pLogout.style.display = "inline-flex";
-    unlockDownloads.textContent = "Enabled ✅";
-  }
-  renderProfile();
-
-  // Email/pass auth
-  btnLogin?.addEventListener("click", async () => {
-    if (!firebaseReady) return setMsg("Firebase config paste karo, tabhi login chalega.");
-    try {
-      await signInWithEmailAndPassword(auth, (emailEl?.value || "").trim(), passEl?.value || "");
-    } catch (err) {
-      setMsg(err?.message || "Login failed.");
-    }
-  });
-
-  btnSignup?.addEventListener("click", async () => {
-    if (!firebaseReady) return setMsg("Firebase config paste karo, tabhi signup chalega.");
-    try {
-      await createUserWithEmailAndPassword(auth, (emailEl?.value || "").trim(), passEl?.value || "");
-    } catch (err) {
-      setMsg(err?.message || "Signup failed.");
-    }
-  });
-
-  btnGoogle?.addEventListener("click", async () => {
-    if (!firebaseReady) return setMsg("Firebase config paste karo, tabhi Google login chalega.");
-    try {
-      await signInWithPopup(auth, provider);
-    } catch (err) {
-      setMsg(err?.message || "Google sign-in failed.");
-    }
-  });
-
-  btnLogout?.addEventListener("click", async () => {
-    if (!firebaseReady) return;
-    await signOut(auth);
-    closeAuthModal();
-  });
-
-  if (firebaseReady) {
-    onAuthStateChanged(auth, user => {
-      currentUser = user || null;
-      isAuthed = !!user;
-
-      if (isAuthed) {
-        if (btnLogout) btnLogout.style.display = "inline-flex";
-        if (authSuccessText) authSuccessText.textContent = `Welcome back, ${user.displayName || user.email || "Creator"}!`;
-        if (authSuccess) authSuccess.style.display = "flex";
-        setMsg("");
-
-        renderProfile();
-
-        const go = afterLoginGoTo || "profile";
-        setTimeout(() => {
-          closeAuthModal();
-          setActivePage(go);
-        }, settings.animOn ? 650 : 0);
-      } else {
-        if (btnLogout) btnLogout.style.display = "none";
-        if (authSuccess) authSuccess.style.display = "none";
-        renderProfile();
-      }
-    });
-  }
-
-  /* ---------- Login required ONLY on asset actions ---------- */
-  document.querySelectorAll(".requires-auth").forEach(btn => {
-    btn.addEventListener("click", () => {
-      const item = btn.dataset.item || "this asset";
-      const action = btn.dataset.action || "open";
-
-      if (!firebaseReady) {
-        openAuthModal("Firebase config missing. Sign in disabled.", "profile");
-        return;
-      }
-
-      if (!isAuthed) {
-        openAuthModal(`Sign in first to ${action} • ${item}.`, "profile");
-        return;
-      }
-
-      pushDownload(item, action);
-
-      // Put real links here later
-      // if(action === "open") window.open("https://your-link", "_blank");
-      // if(action === "download") window.location.href = "https://your-download-link";
-
-      alert(`✅ ${action.toUpperCase()} allowed for: ${item}\n(Next: yahan real link set karenge)`);
-    });
-  });
-
-  /* ---------- CUSTOM U-SELECT (Theme + UI size) ---------- */
-  function setupUSelect() {
-    const selects = document.querySelectorAll(".u-select");
-
-    function setActive(sel, value) {
-      const bind = sel.dataset.bind; // "theme" | "ui"
-      const label = sel.querySelector(".u-select-label");
-      const options = sel.querySelectorAll(".u-option");
-      options.forEach(o => o.classList.toggle("active", o.dataset.value === value));
-
-      if (bind === "theme") {
-        settings.theme = value;
-        saveSettings(settings);
-        applySettings();
-        if (label) label.textContent = value === "light" ? "Light" : "Dark";
-      }
-
-      if (bind === "ui") {
-        settings.ui = value;
-        saveSettings(settings);
-        applySettings();
-        if (label) label.textContent = value === "small" ? "Small" : value === "large" ? "Large" : "Normal";
-      }
-      if (bind === "soundType") {
-        settings.soundType = value;
-        saveSettings(settings);
-
-        if (label) {
-          label.textContent =
-            value === "soft" ? "Soft" :
-            value === "click" ? "Click" :
-            "Beep (default)";
-        }
-      }
-
-      if (bind === "animIntensity") {
-        settings.animIntensity = value;
-        saveSettings(settings);
-        applySettings();
-
-        if (label) {
-          label.textContent =
-            value === "low" ? "Low" :
-            value === "high" ? "High" :
-            "Medium (default)";
-        }
-      }
-
-    }
-
-    // init
-    selects.forEach(sel => {
-      const bind = sel.dataset.bind;
-      if (bind === "theme") setActive(sel, settings.theme);
-      if (bind === "ui") setActive(sel, settings.ui);
-      if (bind === "soundType") setActive(sel, settings.soundType);
-      if (bind === "animIntensity") setActive(sel, settings.animIntensity);
-
-
-      const btn = sel.querySelector(".u-select-btn");
-      btn?.addEventListener("click", e => {
-        e.stopPropagation();
-
-        // 1) Close other selects
-        selects.forEach(s2 => {
-          if (s2 !== sel) s2.classList.remove("open");
-        });
-
-        // 2) Remove raise from all cards
-        document.querySelectorAll(".card.raised").forEach(c => c.classList.remove("raised"));
-
-        // 3) Toggle current select
-        sel.classList.toggle("open");
-
-        // 4) If open, raise its parent card so menu won't be covered
-        if (sel.classList.contains("open")) {
-          const parentCard = sel.closest(".card");
-          if (parentCard) parentCard.classList.add("raised");
-        }
-      });
-
-
-      sel.querySelectorAll(".u-option").forEach(opt => {
-        opt.addEventListener("click", e => {
-          e.stopPropagation();
-          setActive(sel, opt.dataset.value);
-          sel.classList.remove("open");
-        });
-      });
-    });
-
-    document.addEventListener("click", () => {
-      selects.forEach(s => s.classList.remove("open"));
-      document.querySelectorAll(".card.raised").forEach(c => c.classList.remove("raised"));
-    });
-  }
-  setupUSelect();
-
-  /* ---------- SETTINGS UI wiring (fixed: no null .value errors) ---------- */
-  function paintRange(el) {
-    if (!el) return;
-    const v = Number(el.value);
-    const max = Number(el.max || 100);
-    const pct = Math.round((v / max) * 100);
-    el.style.background = `linear-gradient(90deg, var(--accent) ${pct}%, rgba(255,255,255,.12) ${pct}%)`;
-    if (volValue) volValue.textContent = `${v}%`;
-  }
-
-  function syncSettingsUI() {
-    if (setSoundOn) setSoundOn.checked = !!settings.soundOn;
-    if (setVolume) setVolume.value = String(settings.volume ?? 60);
-    if (setAnimOn) setAnimOn.checked = !!settings.animOn;
-    paintRange(setVolume);
-  }
-  syncSettingsUI();
-
-  setSoundOn?.addEventListener("change", () => {
-    settings.soundOn = setSoundOn.checked;
-    saveSettings(settings);
-  });
-
-
-  setVolume?.addEventListener("input", () => {
-    settings.volume = parseInt(setVolume.value, 10);
-    saveSettings(settings);
-    paintRange(setVolume);
-  });
-
-  setAnimOn?.addEventListener("change", () => {
-    settings.animOn = setAnimOn.checked;
-    saveSettings(settings);
-    applySettings();
-  });
-
-  
-
-  /* ---------- Tap sound + ripple ---------- */
-  let audioCtx;
-  let lastClickSound = 0;
-
-  function playClick() {
-    if (!settings.soundOn) return;
-
-    const now = Date.now();
-    if (now - lastClickSound < 70) return;
-    lastClickSound = now;
-
-    audioCtx ||= new (window.AudioContext || window.webkitAudioContext)();
-    if (audioCtx.state === "suspended") audioCtx.resume().catch(() => {});
-
-    const o = audioCtx.createOscillator();
-    const g = audioCtx.createGain();
-
-    let freq = 860;
-    let type = "square";
-    let dur = 0.045;
-
-    if (settings.soundType === "soft") {
-      freq = 520;
-      type = "sine";
-      dur = 0.06;
-    } else if (settings.soundType === "click") {
-      freq = 1200;
-      type = "triangle";
-      dur = 0.03;
-    }
-
-    const vol = Math.max(0, Math.min(1, (settings.volume || 60) / 100));
-    o.type = type;
-    o.frequency.setValueAtTime(freq, audioCtx.currentTime);
-
-    g.gain.setValueAtTime(0.0001, audioCtx.currentTime);
-    g.gain.exponentialRampToValueAtTime(0.12 * vol, audioCtx.currentTime + 0.006);
-    g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + dur);
-
-    o.connect(g);
-    g.connect(audioCtx.destination);
-
-    o.start();
-    o.stop(audioCtx.currentTime + dur + 0.005);
-  }
-
-  function ripple(e) {
-    if (!settings.animOn) return;
-    const r = document.createElement("span");
-    r.className = "tap-ripple";
-    r.style.left = e.clientX + "px";
-    r.style.top = e.clientY + "px";
-    document.body.appendChild(r);
-    r.addEventListener("animationend", () => r.remove());
-  }
-
-  document.addEventListener(
-    "click",
-    e => {
-      playClick();
-      ripple(e);
-    },
-    { passive: true }
-  );
-
-  /* ---------- Start ---------- */
-  window.addEventListener("load", () => setActivePage("home"));
-  /* ✅ Auto-open auth modal when coming back from Terms */
-  (function autoOpenAuthFromTerms(){
-    const params = new URLSearchParams(window.location.search);
-    if (params.get("openAuth") === "1") {
-      // thoda delay taki page ready ho jaaye
-      setTimeout(() => {
-        openAuthModal("Please accept Terms & Conditions to continue.");
-      }, settings.animOn ? 300 : 0);
-    }
-    if (params.get("openAuth") === "1") {
-      history.replaceState(null, "", "index.html");
-    }
-
-  })();
-  function safeOpenTerms(){
-    // try normal navigation
-    try {
-      window.location.href = "terms.html?from=auth";
-      return false;
-    } catch (e) {
-      // fallback
-      window.location.href = "index.html";
-      return false;
-    }
-  }
-
-</script>
-
-</body>
+    <footer>
+      <i class="fa fa-home active" data-page="home" title="Home"></i>
+      <i class="fa fa-folder" data-page="assets" title="Assets"></i>
+      <i class="fa fa-search" data-page="search" title="Search"></i>
+      <i class="fa fa-user" data-page="about" title="About"></i>
+      <i class="fa fa-id-badge" data-page="profile" title="Profile"></i>
+    </footer>
+  </body>
 </html>
